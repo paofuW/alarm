@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- 一般文字的规格 -->
+    <style name="normalTextStyle">
+        <item name="android:textSize">@dimen/normal_font_size</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <!-- 一般使用的内边距 -->
+    <style name="normalPadding">
+        <item name="android:paddingTop">@dimen/normal_padding</item>
+        <item name="android:paddingBottom">@dimen/normal_padding</item>
+        <item name="android:paddingLeft">@dimen/normal_padding</item>
+        <item name="android:paddingRight">@dimen/normal_padding</item>
+    </style>
+
+    <!-- 一般块的样式 -->
+    <style name="detail_blockStyle" parent="normalPadding">
+        <item name="android:paddingTop">@dimen/detail_block_paddingTB</item>
+        <item name="android:paddingBottom">@dimen/detail_block_paddingTB</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:onClick">onClick</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!-- 引入图标样式 -->
+    <style name="detail_tipIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+
+
+
+</resources>

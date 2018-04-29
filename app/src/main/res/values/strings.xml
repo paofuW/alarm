@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">alarm</string>
+
+    <!--初始页面-->
+    <string name="create_button">创建闹钟</string>
+
+    <!--闹钟详情页面-->
+    <string name="detail_hour">时</string>
+    <string name="detail_minute">分</string>
+    <string name="detail_repeat">重复</string>
+    <string name="detail_frequency_once">一次</string>
+    <string name="detail_frequency_everyday">每天</string>
+    <string name="detail_frequency_workday">周一至周五</string>
+    <string name="detail_frequency_weekend">周末</string>
+    <string name="detail_ringtone">铃声</string>
+    <string name="detail_default_ringtone">默认</string>
+    <string name="detail_volume">音量</string>
+    <string name="detail_vibrate">响铃时振动</string>
+    <string name="detail_remind_later">稍后提醒</string>
+    <string name="detail_turn_off">关闭</string>
+    <string name="detail_description">描述</string>
+    <string name="detail_none">无</string>
+    <string name="detail_delete">删除</string>
+
+    <!-- 导航栏 -->
+    <string name="actionbar_cancel">取消</string>
+    <string name="actionbar_save">保存</string>
+
+</resources>
