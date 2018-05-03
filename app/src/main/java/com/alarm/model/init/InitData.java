@@ -1,6 +1,7 @@
 package com.alarm.model.init;
 
 import com.alarm.model.bean.Alarm;
+import com.alarm.model.util.AlarmDataUtil;
 
 /**
  * Created by Administrator on 2018/4/26.
@@ -17,13 +18,15 @@ public class InitData {
 
     public static Alarm initAlarm(){
         Alarm alarm = new Alarm();
+        alarm.setID(AlarmDataUtil.createID());
         alarm.setHour(6);
         alarm.setMinute(0);
         alarm.setFrequency("一次");
         alarm.setVolume(80);
-        alarm.setVibrate(false);
         alarm.setRingtone("默认");
-        alarm.setRemindAfter("关闭");
+        alarm.setVibrate(false);
+        alarm.setRemindAfter(0);
+        alarm.setDescription("无");
         return alarm;
     }
 }

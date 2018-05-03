@@ -1,7 +1,6 @@
 package com.alarm.view;
 
 import android.app.ActionBar;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,10 +53,11 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     private Button btn_delete;
 
     private final static int CANCEL = 0;
-    private final static int CREATE_ALARM = 0;
-    private final static int ALTER_ALARM = 1;
+    private final static int CREATE_ALARM = 1;
+    private final static int ALTER_ALARM = 2;
+    private final static int DELETE_ALARM = 3;
     private String[] frequencyChoices = new String[]{"仅一次","周一至周五","每天","周末"};
-    private String[] remindAfterChoices = new String[]{"关闭","5分钟","10分钟","15分钟","30分钟";
+    private String[] remindAfterChoices = new String[]{"关闭","5分钟","10分钟","15分钟","30分钟"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,8 +68,8 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         hourArr = DataInitialization.getHourArr(0,23);
         minuteArr = DataInitialization.getMinuteArr(0,59);
 
-        dataHandler = new DataHandler(AlarmDetail.this);
-        getAndInitAllView(AlarmDetail.this);
+        dataHandler = new DataHandler();
+        getAndInitAllView();
 
         returnIntent = new Intent();
     }
@@ -84,7 +84,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                         .setSingleChoiceItems(frequencyChoices, index, new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which){
-                                dataHandler.saveFrequency(alarm, frequencyChoices[which]);
+                                alarm.setFrequency(frequencyChoices[which]);
                                 tv_frequency.setText(frequencyChoices[which]);
                                 dialog.dismiss();
                             }
@@ -98,7 +98,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                         .setSingleChoiceItems(remindAfterChoices, index, new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which){
-                                dataHandler.saveRemindAfter(alarm, frequencyChoices[which]);
+                                alarm.setRemindAfter(dataHandler.getRemindAfter(remindAfterChoices[which]));
                                 tv_remindLater.setText(remindAfterChoices[which]);
                                 dialog.dismiss();
                             }
@@ -128,12 +128,15 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                         .create().show();
                 break;
             case R.id.btn_actionBar_save:
-                dataHandler.saveAlarmData(alarm);
-                returnIntent.putExtra("alarmNewData", alarm);
+                returnIntent.putExtra("alarm", alarm);
                 AlarmDetail.this.setResult(typeOfOperation, returnIntent);
                 break;
             case R.id.btn_actionBar_cancel:
                 AlarmDetail.this.setResult(CANCEL, returnIntent);
+                break;
+            case R.id.btn_detail_delete:
+                returnIntent.putExtra("alarm", alarm);
+                AlarmDetail.this.setResult(DELETE_ALARM, returnIntent);
                 break;
         }
     }
@@ -143,7 +146,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         updateRestOfTime(hourArr[wv_hour.getCurrentItem()], minuteArr[wv_minute.getCurrentItem()]);
     }
 
-    private void getAndInitAllView(Context context){
+    private void getAndInitAllView(){
         wv_hour = (WheelView)findViewById(R.id.wv_detail_hour);
         wv_minute = (WheelView)findViewById(R.id.wv_detail_minute);
         tv_restOfTime = (TextView)findViewById(R.id.tv_detail_restOfTime);
@@ -155,8 +158,10 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         tv_description = (TextView)findViewById(R.id.tv_detail_description);
         btn_delete = (Button)findViewById(R.id.btn_detail_delete);
 
-        initWheelView(alarm.getHour(), alarm.getMinute());
-        updateRestOfTime(alarm.getHour(), alarm.getMinute());
+        int alarmHour = alarm.getHour();
+        int alarmMinute = alarm.getMinute();
+        initWheelView(alarmHour, alarmMinute);
+        updateRestOfTime(alarmHour, alarmMinute);
         tv_frequency.setText(alarm.getFrequency());
         tv_ringtone.setText(alarm.getRingtone());
         skBar_volume.setProgress(alarm.getVolume());
@@ -182,14 +187,13 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                return;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                return;
             }
         });
+        btn_delete.setOnClickListener(this);
     }
 
     private void initWheelView(int alarmHour, int alarmMinute){

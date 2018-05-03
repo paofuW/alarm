@@ -33,16 +33,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v){
-        switch(v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btn_main_createAlarm:
                 intent.putExtra("typeOfOperation", CREATE_ALARM);
                 startActivityForResult(intent, CREATE_ALARM);
                 break;
-//            case R.id.alterAlarm:
-//                intent.putExtra("typeOfOperation", ALTER_ALARM);
-//                startActivityForResult(intent, ALTER_ALARM);
-//                break;
+            case R.id.alterAlarm:
+                intent.putExtra("typeOfOperation", ALTER_ALARM);
+                startActivityForResult(intent, ALTER_ALARM);
+                break;
             default:
                 break;
         }

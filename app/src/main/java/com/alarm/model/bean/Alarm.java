@@ -8,14 +8,23 @@ import android.os.Parcelable;
  */
 
 public class Alarm implements Parcelable{
+    private int ID;
     private int hour;
     private int minute;
     private String frequency;
     private int volume;
     private String ringtone;
     private Boolean vibrate;
-    private String remindAfter;
+    private int remindAfter;
     private String description;
+
+    //获取和设置该闹钟的id（用于设置pending的requestCode以识别不同的闹钟
+    public int getID(){
+        return ID;
+    }
+    public void setID(int id){
+        this.ID = id;
+    }
 
     //获取或设置小时
     public int getHour() {
@@ -66,10 +75,10 @@ public class Alarm implements Parcelable{
     }
 
     //获取或设置提醒时间
-    public String getRemindAfter(){
+    public int getRemindAfter(){
         return remindAfter;
     }
-    public void setRemindAfter(String remindAfter){
+    public void setRemindAfter(int remindAfter){
         this.remindAfter = remindAfter;
     }
 
@@ -89,13 +98,14 @@ public class Alarm implements Parcelable{
     //give some attention to the oder between  writeToParcel and createFromParcel
     @Override
     public void writeToParcel(Parcel parcel, int flags){
+        parcel.writeInt(ID);
         parcel.writeInt(hour);
         parcel.writeInt(minute);
         parcel.writeString(frequency);
         parcel.writeInt(volume);
         parcel.writeString(ringtone);
         parcel.writeByte((byte)(vibrate?1:0));
-        parcel.writeString(remindAfter);
+        parcel.writeInt(remindAfter);
         parcel.writeString(description);
     }
 
@@ -109,13 +119,14 @@ public class Alarm implements Parcelable{
         @Override
         public Alarm createFromParcel(Parcel source) {
             Alarm alarm = new Alarm();
+            alarm.setID(source.readInt());
             alarm.setHour(source.readInt());
             alarm.setMinute(source.readInt());
             alarm.setFrequency(source.readString());
             alarm.setVolume(source.readInt());
             alarm.setRingtone(source.readString());
             alarm.setVibrate((source.readByte()!=0));
-            alarm.setRemindAfter(source.readString());
+            alarm.setRemindAfter(source.readInt());
             alarm.setDescription(source.readString());
             return alarm;
         }

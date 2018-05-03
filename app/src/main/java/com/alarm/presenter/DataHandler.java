@@ -1,10 +1,9 @@
 package com.alarm.presenter;
 
-import android.content.Context;
-
 import com.alarm.model.bean.Alarm;
-import com.alarm.model.util.HandleString;
-import com.alarm.model.util.HandleTime;
+import com.alarm.model.util.AlarmDataUtil;
+import com.alarm.model.util.ArrayUtil;
+import com.alarm.model.util.TimeUtil;
 
 
 /**
@@ -12,27 +11,23 @@ import com.alarm.model.util.HandleTime;
  */
 
 public class DataHandler {
-    private Context mContext;
-
-    public DataHandler(Context context){
-        this.mContext = context;
-    }
 
     public Integer[] saveAndGetRestOfTime(Alarm alarm, int alarmHour, int alarmMinute){
         alarm.setHour(alarmHour);
         alarm.setMinute(alarmMinute);
-        return HandleTime.calculateRestOfTime(alarmHour, alarmMinute);
+        return TimeUtil.calculateRestOfTime(alarmHour, alarmMinute);
     }
 
     public int getIndex(String[] stringArr, String item){
-        return HandleString.getIndex(stringArr, item);
+        return ArrayUtil.getIndex(stringArr, item);
     }
 
-    public void saveFrequency(Alarm alarm, String frequency){
-        alarm.setFrequency(frequency);
+//    将稍后提醒的时间转化为int类型
+    public int getRemindAfter(String remindAfter){
+        return AlarmDataUtil.remindAfStrToInt(remindAfter);
     }
 
-    public void saveRemindAfter(Alarm alarm, String remindAfter){
-        alarm.setRemindAfter(remindAfter);
+    public void saveAndSetAlarm(Alarm alarm){
+
     }
 }
