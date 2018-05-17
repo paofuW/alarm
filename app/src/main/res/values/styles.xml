@@ -26,10 +26,9 @@
 
     <!-- 一般块的样式 -->
     <style name="detail_blockStyle" parent="normalPadding">
-        <item name="android:paddingTop">@dimen/detail_block_paddingTB</item>
-        <item name="android:paddingBottom">@dimen/detail_block_paddingTB</item>
+        <item name="android:paddingTop">@dimen/small_padding</item>
+        <item name="android:paddingBottom">@dimen/small_padding</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:onClick">onClick</item>
         <item name="android:clickable">true</item>
     </style>
 

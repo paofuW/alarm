@@ -2,32 +2,36 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <Button
-        android:id="@+id/btn_actionBar_cancel"
+    <ImageButton
+        android:id="@+id/img_detail_actionBarCancel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@null"
-        android:text="@string/actionbar_cancel"
-        android:textColor="@color/colorOrange"
+        android:src="@mipmap/back"
+        android:minWidth="0dp"
+        android:paddingLeft="10dp"
         android:layout_alignParentLeft="true"
-        />
+        android:layout_alignParentStart="true"/>
     <TextView
-        android:id="@+id/tv_actionBar_title"
+        android:id="@+id/tv_detail_actionBarTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
         android:textSize="@dimen/normal_font_size"
         android:textColor="@color/colorBlack"
         />
-    <Button
-        android:id="@+id/btn_actionBar_save"
+    <ImageButton
+        android:id="@+id/img_detail_actionBarSave"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@mipmap/chosen"
         android:background="@null"
-        android:text="@string/actionbar_save"
-        android:textColor="@color/colorOrange"
+        android:paddingRight="10dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         />
 </RelativeLayout>

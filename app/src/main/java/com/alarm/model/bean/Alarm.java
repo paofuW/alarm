@@ -12,9 +12,10 @@ public class Alarm implements Parcelable{
     private int hour;
     private int minute;
     private String frequency;
-    private int volume;
+    private Float volume;
     private String ringtone;
-    private Boolean vibrate;
+    private String ringtoneUri;
+    private int ringtoneType;
     private int remindAfter;
     private String description;
 
@@ -51,10 +52,10 @@ public class Alarm implements Parcelable{
     }
 
     //获取或设置音量
-    public int getVolume(){
+    public Float getVolume(){
         return volume;
     }
-    public void setVolume(int volume){
+    public void setVolume(Float volume){
         this.volume = volume;
     }
 
@@ -66,12 +67,20 @@ public class Alarm implements Parcelable{
         this.ringtone = ringtone;
     }
 
-    //获取或设置震动
-    public Boolean getVibrate(){
-        return vibrate;
+    //获取或设置铃声的uri
+    public String getRingtoneUri(){
+        return  ringtoneUri;
     }
-    public void setVibrate(Boolean vibrate){
-        this.vibrate = vibrate;
+    public void setRingtoneUri(String ringtoneUri){
+        this.ringtoneUri = ringtoneUri;
+    }
+
+    //获取或设置铃声的类型（系统铃声或本地铃声）
+    public int getRingtoneType(){
+        return  ringtoneType;
+    }
+    public void setRingtoneType(int ringtoneType){
+        this.ringtoneType = ringtoneType;
     }
 
     //获取或设置提醒时间
@@ -102,9 +111,10 @@ public class Alarm implements Parcelable{
         parcel.writeInt(hour);
         parcel.writeInt(minute);
         parcel.writeString(frequency);
-        parcel.writeInt(volume);
+        parcel.writeFloat(volume);
         parcel.writeString(ringtone);
-        parcel.writeByte((byte)(vibrate?1:0));
+        parcel.writeString(ringtoneUri);
+        parcel.writeInt(ringtoneType);
         parcel.writeInt(remindAfter);
         parcel.writeString(description);
     }
@@ -123,9 +133,10 @@ public class Alarm implements Parcelable{
             alarm.setHour(source.readInt());
             alarm.setMinute(source.readInt());
             alarm.setFrequency(source.readString());
-            alarm.setVolume(source.readInt());
+            alarm.setVolume(source.readFloat());
             alarm.setRingtone(source.readString());
-            alarm.setVibrate((source.readByte()!=0));
+            alarm.setRingtoneUri(source.readString());
+            alarm.setRingtoneType(source.readInt());
             alarm.setRemindAfter(source.readInt());
             alarm.setDescription(source.readString());
             return alarm;

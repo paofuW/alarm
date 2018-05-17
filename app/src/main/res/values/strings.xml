@@ -3,10 +3,12 @@
 
     <!--初始页面-->
     <string name="create_button">创建闹钟</string>
+    <string name="arrow_down">v</string>
+    <string name="arrow_right">></string>
+    <string name="add_alarm">添加闹钟</string>
+    <string name="minute">%1$d分钟</string>
 
     <!--闹钟详情页面-->
-    <string name="detail_hour">时</string>
-    <string name="detail_minute">分</string>
     <string name="detail_repeat">重复</string>
     <string name="detail_frequency_once">一次</string>
     <string name="detail_frequency_everyday">每天</string>
@@ -25,5 +27,10 @@
     <!-- 导航栏 -->
     <string name="actionbar_cancel">取消</string>
     <string name="actionbar_save">保存</string>
+
+    <!-- 选择铃声界面 -->
+    <string name="ringtone_music">本地音乐</string>
+    <string name="ringtone_system">系统铃声</string>
+    <string name="ringtone_custom">自定义铃声</string>
 
 </resources>

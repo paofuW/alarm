@@ -40,7 +40,7 @@ public class AlarmServiceUtil {
         return isRunning;
     }
 
-//    适用于sdk版本小于19的android机（只提醒一次）
+    //适用于sdk版本小于19的android机（只提醒一次）
     public static void setAlarmService(Context context, Alarm alarm){
         Log.i("ServiceUtil", "invokeTimerPOIService wac called.." );
         PendingIntent pi = null;
@@ -60,7 +60,7 @@ public class AlarmServiceUtil {
         am.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, pi);
     }
 
-    //    适用于sdk版本小于19的android机（重复提醒）
+    //适用于sdk版本小于19的android机（重复提醒）
     public static void setRepeatAlarmService(Context context, Alarm alarm){
         Log.i("ServiceUtil", "invokeTimerPOIService wac called.." );
         PendingIntent pi = null;
@@ -80,7 +80,7 @@ public class AlarmServiceUtil {
         am.setRepeating(AlarmManager.RTC_WAKEUP, alarmTimeMillis, 24*60*60*1000, pi);
     }
 
-//    适用于sdk版本大于19的android机（提醒一次）
+    //适用于sdk版本大于19的android机（提醒一次）
     public static void setWindowAlarmService(Context context, Alarm alarm){
         Log.i("ServiceUtil", "invokeTimerPOIService wac called.." );
         boolean isRepeat = !alarm.getFrequency().equals("一次");

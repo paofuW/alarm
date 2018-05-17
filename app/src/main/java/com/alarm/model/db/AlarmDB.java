@@ -8,14 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import com.alarm.model.bean.Alarm;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/5/3.
  */
 
 public class AlarmDB {
-    private static final String DB_NAME = "alarm";
+    private static final String DB_NAME = "alarm.db";
     private static AlarmDB alarmDB;
     private SQLiteDatabase db;
 
@@ -41,15 +40,16 @@ public class AlarmDB {
             values.put("frequency", alarm.getFrequency());
             values.put("volume", alarm.getVolume());
             values.put("ringtone", alarm.getRingtone());
-            values.put("vibrate", (alarm.getVibrate()?1:0));
+            values.put("ringtoneUri", alarm.getRingtoneUri());
+            values.put("ringtoneType", alarm.getRingtoneType());
             values.put("remindAfter", alarm.getRemindAfter());
             values.put("description", alarm.getDescription());
             db.insert("Alarm", null, values);
         }
     }
 
-    public List<Alarm> loadAllAlarms(){
-        List<Alarm> list = new ArrayList<>();
+    public ArrayList<Alarm> loadAllAlarms(){
+        ArrayList<Alarm> list = new ArrayList<>();
         Cursor cursor = db
                 .query("Alarm", null, null, null, null, null, null);
         if(cursor.moveToFirst()){
@@ -59,13 +59,15 @@ public class AlarmDB {
                 alarm.setHour(cursor.getInt(cursor.getColumnIndex("hour")));
                 alarm.setMinute(cursor.getInt(cursor.getColumnIndex("minute")));
                 alarm.setFrequency(cursor.getString(cursor.getColumnIndex("frequency")));
-                alarm.setVolume(cursor.getInt(cursor.getColumnIndex("volume")));
+                alarm.setVolume(cursor.getFloat(cursor.getColumnIndex("volume")));
                 alarm.setRingtone(cursor.getString(cursor.getColumnIndex("ringtone")));
-                alarm.setVibrate((cursor.getInt(cursor.getColumnIndex("vibrate")) == 1));
+                alarm.setRingtoneUri(cursor.getString(cursor.getColumnIndex("ringtoneUri")));
+                alarm.setRingtoneType(cursor.getInt(cursor.getColumnIndex("ringtoneType")));
                 alarm.setRemindAfter(cursor.getInt(cursor.getColumnIndex("remindAfter")));
                 alarm.setDescription(cursor.getString(cursor.getColumnIndex("description")));
                 list.add(alarm);
             }while(cursor.moveToNext());
+            cursor.close();
         }
         return list;
     }
@@ -82,7 +84,8 @@ public class AlarmDB {
         values.put("frequency", alarm.getFrequency());
         values.put("volume", alarm.getVolume());
         values.put("ringtone", alarm.getRingtone());
-        values.put("vibrate", (alarm.getVibrate()?1:0));
+        values.put("ringtoneUri", alarm.getRingtoneUri());
+        values.put("ringtoneType", alarm.getRingtoneType());
         values.put("remindAfter", alarm.getRemindAfter());
         values.put("description", alarm.getDescription());
         db.update("Alarm", values, "id="+alarm.getID(),null);

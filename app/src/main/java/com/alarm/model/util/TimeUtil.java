@@ -8,7 +8,7 @@ import java.util.TimeZone;
  */
 
 public class TimeUtil {
-    private static Integer[] restOfTime = new Integer[]{};
+    private static Integer[] restOfTime = new Integer[2];
 
 //    计算距离闹钟响起的时间，该函数只是计算下一个设置的时间点距离现在的时间，不考虑频率（即这个点的闹钟是否需要）
     public static Integer[] calculateRestOfTime(int alarmHour, int alarmMinute){

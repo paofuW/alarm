@@ -1,5 +1,7 @@
 package com.alarm.model.util;
 
+import java.util.ArrayList;
+
 /**
  * Created by Administrator on 2018/5/1.
  */
@@ -26,5 +28,14 @@ public class ArrayUtil {
             }
         }
         return isContain;
+    }
+
+    //初始化一个连续数组
+    public static ArrayList<String> initArray(Integer startNum, Integer endNum){
+        ArrayList<String> arr = new ArrayList<>();
+        for(int i=startNum; i<=endNum; i++){
+            arr.add(Integer.toString(i));
+        }
+        return arr;
     }
 }

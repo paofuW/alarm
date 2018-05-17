@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ls_alarm_ringtoneMusic"
+        android:divider="@drawable/divider"
+        android:choiceMode="singleChoice"
+        android:background="@drawable/item_click"
+        android:dividerHeight="1dp"
+        android:scrollbars="none"
+        android:layout_gravity="center_vertical"
+        >
+    </ListView>
+</LinearLayout>

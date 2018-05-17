@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ringtone_custom"
+        android:background="@color/colorLightGrey"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"
+        />
+    <RelativeLayout
+        android:id="@+id/rl_ringtone_music"
+        android:layout_height="@dimen/detail_block_height"
+        style="@style/detail_blockStyle"
+        >
+        <TextView
+            style="@style/normalTextStyle"
+            android:text="@string/ringtone_music"
+            android:layout_centerVertical="true"
+            />
+        <ImageView
+            style="@style/detail_tipIcon"
+            android:src="@drawable/arrow_right"
+            android:contentDescription="@string/arrow_right"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ringtone_system"
+        android:background="@color/colorLightGrey"
+        android:paddingLeft="@dimen/normal_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"
+        />
+    <ListView
+        android:id="@+id/ls_alarm_ringtoneSystem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_click"
+        android:divider="@drawable/divider"
+        android:choiceMode="singleChoice"
+        android:dividerHeight="1dp"
+        android:scrollbars="none"
+        android:layout_gravity="center_vertical"
+        >
+    </ListView>
+</LinearLayout>

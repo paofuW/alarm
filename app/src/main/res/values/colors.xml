@@ -8,4 +8,5 @@
     <color name="colorWarn">#ff0000</color>
     <color name="colorOrange">#FF7F00</color>
     <color name="colorLightBlue">#00aaff</color>
+    <color name="colorWhite">#ffffff</color>
 </resources>

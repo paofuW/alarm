@@ -3,19 +3,27 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.alarm">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:label="alarm"
         android:theme="@style/AppTheme"
-        tools:replace="android:label">
-        <activity android:name=".view.MainActivity">
+        tools:replace="android:label">，
+        <activity
+            android:name=".view.MainActivity"
+            android:logo="@null"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".view.AlarmDetail">
+        </activity>
+        <service android:name=".model.service.AudioService"/>
+        <service android:name=".model.service.MyAlarmService"/>
     </application>
-
 </manifest>

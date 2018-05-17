@@ -14,8 +14,10 @@ public class AlarmOpenHelper extends SQLiteOpenHelper {
             +"id integer primary key,"
             +"hour integer,"
             +"minute integer"
-            +"frequency integer,"
+            +"frequency text,"
             +"ringtone text,"
+            +"ringtoneUri text,"
+            +"ringtoneType integer,"
             +"vibrate boolean,"
             +"remindAfter integer,"
             +"description text)";
