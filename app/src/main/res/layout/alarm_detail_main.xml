@@ -2,75 +2,28 @@
 <ScrollView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/sv_detail"
+    android:descendantFocusability="afterDescendants"
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:divider="@drawable/divider"
-    android:showDividers="middle"
-    android:dividerPadding="15dp"
+    android:background="@color/colorLightGrey0"
     >
 
-    <LinearLayout
+    <TimePicker
+        android:id="@+id/tp_detail"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numbersBackgroundColor="@color/colorPink"
+        android:headerBackground="@color/colorLightSkyBlue"
+        android:numbersSelectorColor="@color/colorLightSkyBlue"
         >
-        <TextView
-            android:id="@+id/tv_detail_restOfTime"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            >
-
-            <ImageView
-                android:id="@+id/guideline1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:minHeight="0dp"
-                android:src="@drawable/colon"
-                android:textSize="40sp"
-                />
-
-            <LinearLayout
-                android:layout_width="@dimen/detail_time_width"
-                android:layout_height="@dimen/detail_time_height"
-                android:layout_marginRight="@dimen/detail_time_marginM"
-                android:layout_toLeftOf="@id/guideline1"
-                >
-                <com.alarm.view.WheelView
-                    android:id="@+id/wv_detail_hour"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    >
-                </com.alarm.view.WheelView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="@dimen/detail_time_width"
-                android:layout_height="@dimen/detail_time_height"
-                android:layout_marginLeft="@dimen/detail_time_marginM"
-                android:layout_toRightOf="@id/guideline1">
-                <com.alarm.view.WheelView
-                    android:id="@+id/wv_detail_minute"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    >
-                </com.alarm.view.WheelView>
-            </LinearLayout>
-        </RelativeLayout>
-
-
-    </LinearLayout>
+    </TimePicker>
 
     <RelativeLayout
         android:id="@+id/rl_detail_setFrequency"
@@ -142,28 +95,28 @@
             />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_detail_setRemind"
-        style="@style/detail_blockStyle"
-        android:layout_height="@dimen/detail_block_height"
-        >
-        <TextView
-            style="@style/normalTextStyle"
-            android:text="@string/detail_remind_later"
-            />
-        <TextView
-            android:id="@+id/tv_detail_remindLater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/detail_turn_off"
-            android:layout_alignParentBottom="true"
-            />
-        <ImageView
-            style="@style/detail_tipIcon"
-            android:src="@drawable/arrow_down"
-            android:contentDescription="@string/arrow_down"
-            />
-    </RelativeLayout>
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_detail_setRemind"-->
+        <!--style="@style/detail_blockStyle"-->
+        <!--android:layout_height="@dimen/detail_block_height"-->
+        <!--&gt;-->
+        <!--<TextView-->
+            <!--style="@style/normalTextStyle"-->
+            <!--android:text="@string/detail_remind_later"-->
+            <!--/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/tv_detail_remindLater"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/detail_turn_off"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--/>-->
+        <!--<ImageView-->
+            <!--style="@style/detail_tipIcon"-->
+            <!--android:src="@drawable/arrow_down"-->
+            <!--android:contentDescription="@string/arrow_down"-->
+            <!--/>-->
+    <!--</RelativeLayout>-->
 
     <RelativeLayout
         android:id="@+id/rl_detail_setDescription"
@@ -180,6 +133,9 @@
             android:id="@+id/tv_detail_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="250dp"
+            android:ellipsize="end"
+            android:lines="1"
             android:layout_alignParentBottom="true"
             android:text="@string/detail_none"
             />
@@ -191,13 +147,62 @@
             />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_detail_delete"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/normal_block"
+        style="@style/marginStyle">
+        <Switch
+            android:id="@+id/swt_detail_advancedRemind"
+            style="@style/detail_blockStyle"
+            android:layout_height="@dimen/detail_block_height"
+            android:text="@string/detail_advanced_remind"
+            android:textSize="@dimen/normal_font_size"
+            android:textColor="@color/colorBlack"
+            android:layout_margin="0dp"
+            android:checked="false"
+            >
+        </Switch>
+        <RelativeLayout
+            android:id="@+id/rl_detail_setVerification"
+            style="@style/detail_blockStyle"
+            android:layout_height="@dimen/detail_block_height"
+            android:layout_margin="0dp"
+            android:visibility="gone"
+            >
+
+            <TextView
+                style="@style/normalTextStyle"
+                android:layout_width="wrap_content"
+                android:text="@string/detail_input_verification"/>
+
+            <TextView
+                android:id="@+id/tv_detail_verification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="@string/detail_verification"
+                />
+
+            <ImageView
+                style="@style/detail_tipIcon"
+                android:src="@drawable/arrow_down"
+                android:contentDescription="@string/arrow_down"
+                />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_detail_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:background="@null"
+        android:padding="@dimen/normal_padding"
         android:text="@string/detail_delete"
-        android:textColor="@color/colorWarn"
+        android:textColor="@color/colorBlack"
         android:textSize="@dimen/normal_font_size"
         />
 </LinearLayout>

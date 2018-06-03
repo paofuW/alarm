@@ -22,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center_vertical"
         android:textSize="@dimen/normal_font_size"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorWhite"
         />
     <ImageButton
         android:id="@+id/img_detail_actionBarSave"

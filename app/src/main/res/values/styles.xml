@@ -3,12 +3,12 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorLightBlue</item>
     </style>
 
-    <!-- 一般文字的规格 -->
+    <!-- 一般TextView的规格 -->
     <style name="normalTextStyle">
         <item name="android:textSize">@dimen/normal_font_size</item>
         <item name="android:textColor">@color/colorBlack</item>
@@ -16,20 +16,32 @@
         <item name="android:layout_width">wrap_content</item>
     </style>
 
-    <!-- 一般使用的内边距 -->
-    <style name="normalPadding">
-        <item name="android:paddingTop">@dimen/normal_padding</item>
-        <item name="android:paddingBottom">@dimen/normal_padding</item>
-        <item name="android:paddingLeft">@dimen/normal_padding</item>
-        <item name="android:paddingRight">@dimen/normal_padding</item>
+    <!-- 小号TextView的规格 -->
+    <style name="smallTextStyle" parent="normalTextStyle">
+        <item name="android:textSize">@dimen/small_font_size</item>
     </style>
 
-    <!-- 一般块的样式 -->
-    <style name="detail_blockStyle" parent="normalPadding">
+    <!-- 大号TextView的规格 -->
+    <style name="largeTextStyle" parent="normalTextStyle">
+        <item name="android:textSize">@dimen/large_font_size</item>
+    </style>
+
+    <!-- 外边距 -->
+    <style name="marginStyle">
+        <item name="android:layout_marginTop">@dimen/normal_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/normal_margin_lr</item>
+        <item name="android:layout_marginRight">@dimen/normal_margin_lr</item>
+    </style>
+
+    <!-- detail模块中块的样式 -->
+    <style name="detail_blockStyle" parent="marginStyle">
         <item name="android:paddingTop">@dimen/small_padding</item>
         <item name="android:paddingBottom">@dimen/small_padding</item>
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingLeft">@dimen/normal_padding</item>
+        <item name="android:paddingRight">@dimen/normal_padding</item>
         <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/normal_block</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
 
     <!-- 引入图标样式 -->
@@ -39,8 +51,6 @@
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_centerVertical">true</item>
     </style>
-
-
 
 
 </resources>

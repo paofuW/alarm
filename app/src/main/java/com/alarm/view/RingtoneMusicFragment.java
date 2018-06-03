@@ -1,7 +1,8 @@
 package com.alarm.view;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,45 +27,47 @@ public class RingtoneMusicFragment extends Fragment{
     private HashMap<String, String> customMusic;
     private ArrayList<String> customMusicNames;
     private View rootView;
+    private ArrayAdapter<String> adapter;
 
     private AlarmDetail alarmDetail;
-    private int typeOfMusic;
+    public boolean created = false;
 
     private ListView listView;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        Log.i("CustomMusic", "onCreate...");
         alarmDetail = (AlarmDetail) getActivity();
-        typeOfMusic = alarmDetail.alarm.getRingtoneType();
-        if(alarmDetail.customMusic != null){
-            customMusic = alarmDetail.customMusic;
-            customMusicNames = DataHandler.getAllMusicName(customMusic);
-        }
+        created = true;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        Log.i("CustomMusic", "onCreateView...");
         if(rootView == null){
-            rootView = inflater.inflate(R.layout.alarm_detail_ringtone_system, container, false);
+            rootView = inflater.inflate(R.layout.alarm_detail_ringtone_custom, container, false);
         }
-        return inflater.inflate(R.layout.alarm_detail_ringtone_custom, container, false);
+        if(AlarmDetail.customMusic != null){
+            initListView(AlarmDetail.customMusic);
+        }
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        while(customMusic == null || rootView == null){
-            if(customMusic == null && alarmDetail.systemMusic != null){
-                customMusic = alarmDetail.systemMusic;
-                customMusicNames = DataHandler.getAllMusicName(customMusic);
-            }
+    }
+
+    public void initListView(HashMap<String, String> cMusic){
+        if(customMusic == null){
+            customMusic = cMusic;
+            customMusicNames = DataHandler.getAllMusicName(customMusic);
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, customMusicNames);
+        adapter = new ArrayAdapter<>(alarmDetail, android.R.layout.simple_list_item_1, customMusicNames);
         listView = (ListView)rootView.findViewById(R.id.ls_alarm_ringtoneMusic);
-        if(typeOfMusic == CUSTOM_MUSIC){
-            listView.setSelection(customMusicNames.indexOf(alarmDetail.alarm.getRingtone()));
+        if(alarmDetail.newRingtoneType == CUSTOM_MUSIC){
+            listView.setSelection(customMusicNames.indexOf(alarmDetail.newRingtone));
         }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -72,26 +75,14 @@ public class RingtoneMusicFragment extends Fragment{
                 alarmDetail.newRingtone = customMusicNames.get(position);
                 alarmDetail.newRingtoneUri = customMusic.get(customMusicNames.get(position));
                 alarmDetail.newRingtoneType = CUSTOM_MUSIC;
-                alarmDetail.musicServiceHandler.playRingtone(alarmDetail.newRingtoneUri, alarmDetail.alarm.getVolume());
+                alarmDetail.musicServiceHandler.playRingtone(alarmDetail.newRingtoneUri, alarmDetail.volume);
             }
         });
         listView.setAdapter(adapter);
     }
 
-
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if(hidden){
-            alarmDetail.musicServiceHandler.stopRingtone();
-        } else {
-            if(typeOfMusic == CUSTOM_MUSIC){
-                if(alarmDetail.newRingtone == null){
-                    listView.setSelection(customMusicNames.indexOf(alarmDetail.alarm.getRingtone()));
-                }else{
-                    listView.setSelection(customMusicNames.indexOf(alarmDetail.newRingtone));
-                }
-            }
-        }
+    public void onResume(){
+        super.onResume();
     }
 }

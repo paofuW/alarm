@@ -31,7 +31,7 @@ public class AlarmDB {
         return alarmDB;
     }
 
-    public void saveAlarm(Alarm alarm){
+    public void addAlarm(Alarm alarm){
         if(alarm != null){
             ContentValues values = new ContentValues();
             values.put("id", alarm.getID());
@@ -44,6 +44,9 @@ public class AlarmDB {
             values.put("ringtoneType", alarm.getRingtoneType());
             values.put("remindAfter", alarm.getRemindAfter());
             values.put("description", alarm.getDescription());
+            values.put("enabled", alarm.getEnabled()?1:0);
+            values.put("isVerification", alarm.getIsVerification()?1:0);
+            values.put("verification", alarm.getVerification());
             db.insert("Alarm", null, values);
         }
     }
@@ -65,6 +68,9 @@ public class AlarmDB {
                 alarm.setRingtoneType(cursor.getInt(cursor.getColumnIndex("ringtoneType")));
                 alarm.setRemindAfter(cursor.getInt(cursor.getColumnIndex("remindAfter")));
                 alarm.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                alarm.setEnabled( (cursor.getInt(cursor.getColumnIndex("enabled"))==1) );
+                alarm.setIsVerification( (cursor.getInt(cursor.getColumnIndex("isVerification"))==1) );
+                alarm.setVerification(cursor.getString(cursor.getColumnIndex("verification")));
                 list.add(alarm);
             }while(cursor.moveToNext());
             cursor.close();
@@ -76,6 +82,10 @@ public class AlarmDB {
         db.delete("Alarm", "id="+alarm.getID(), null);
         return alarm;
     }
+//    直接使用id删除原闹钟
+//    public void removeAlarm(int alarmId){
+//        db.delete("Alarm", "id="+alarmId, null);
+//    }
 
     public Alarm updateAlarm(Alarm alarm){
         ContentValues values = new ContentValues();
@@ -88,6 +98,9 @@ public class AlarmDB {
         values.put("ringtoneType", alarm.getRingtoneType());
         values.put("remindAfter", alarm.getRemindAfter());
         values.put("description", alarm.getDescription());
+        values.put("enabled", alarm.getEnabled()?1:0);
+        values.put("isVerification", alarm.getIsVerification()?1:0);
+        values.put("verification", alarm.getVerification());
         db.update("Alarm", values, "id="+alarm.getID(),null);
         return alarm;
     }

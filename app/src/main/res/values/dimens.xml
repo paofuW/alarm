@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="small_font_size">15sp</dimen>
     <dimen name="normal_font_size">20sp</dimen>
+    <dimen name="large_font_size">40sp</dimen>
     <dimen name="normal_padding">20dp</dimen>
     <dimen name="small_padding">10dp</dimen>
-
-    <dimen name="detail_time_height">224dp</dimen>
-    <dimen name="detail_time_width">80dp</dimen>
-    <dimen name="detail_time_marginM">30dp</dimen>
-    <dimen name="detail_time_marginB">20dp</dimen>
+    <dimen name="normal_margin_top">4dp</dimen>
+    <dimen name="normal_margin_lr">8dp</dimen>
 
     <dimen name="detail_block_height">70dp</dimen>
+    <item name="turnOffAlpha" type="dimen" format="float">0.4</item>
+    <item name="turnOnAlpha" type="dimen" format="float">1</item>
 </resources>

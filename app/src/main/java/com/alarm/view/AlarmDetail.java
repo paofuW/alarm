@@ -1,13 +1,16 @@
 package com.alarm.view;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +23,17 @@ import com.alarm.model.bean.Alarm;
 import com.alarm.presenter.DataInit;
 import com.alarm.presenter.MusicServiceHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.alarm.presenter.DataInit.ALTER_ALARM;
 import static com.alarm.presenter.DataInit.CANCEL;
 import static com.alarm.presenter.DataInit.CREATE_ALARM;
 import static com.alarm.presenter.DataInit.CUSTOM_MUSIC;
+import static com.alarm.presenter.DataInit.MAIN_FRAGMENT;
 import static com.alarm.presenter.DataInit.SYSTEM_MUSIC;
 
 
@@ -34,16 +42,18 @@ import static com.alarm.presenter.DataInit.SYSTEM_MUSIC;
  */
 
 public class AlarmDetail extends AppCompatActivity {
-    private String mainTitle;
+    public String mainTitle;
+    private Context context;
     Intent returnIntent;
 
-    public HashMap<String, String> systemMusic;
-    public HashMap<String, String> customMusic;
+    public static HashMap<String, String> systemMusic;
+    public static HashMap<String, String> customMusic;
     public Integer typeOfOperation;
     public Alarm alarm;
     public String newRingtone;
     public String newRingtoneUri;
     public int newRingtoneType;
+    public float volume;
     public MusicServiceHandler musicServiceHandler;
 
     private View actionBarView;
@@ -53,22 +63,34 @@ public class AlarmDetail extends AppCompatActivity {
     private TextView tv_detail_actionBarTitle;
     private ActionBar actionBar;
 
+    public FragmentManager fragmentManager;
+    public List<Fragment> fragments;
+    public ViewPager vp_detail;
+    public FragmentAdapter fragmentAdapter;
     public AlarmDetailFragment alarmDetailFragment;
     public RingtoneMainFragment ringtoneMainFragment;
     public RingtoneMusicFragment ringtoneMusicFragment;
-    public FragmentTransaction fragmentTransaction;
-    private FragmentManager fragmentManager;
+    //position用于给返回键判断当前所处界面，用于模仿BackStack的行为
+    public int position;
 
-    final Handler handler = new Handler(){
+    public static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+    public final Handler handler = new Handler(){
         @Override
         public void handleMessage(Message mes){
             super.handleMessage(mes);
+            Log.i("AlarmDetail", "接收到线程传回的音乐列表 : " + (mes.what == SYSTEM_MUSIC? "SYSTEM_MUSIC" : "CUSTOM_MUSIC"));
             switch(mes.what){
                 case SYSTEM_MUSIC:
                     systemMusic = (HashMap<String, String>) mes.obj;
+                    if(ringtoneMainFragment.created){
+                        ringtoneMainFragment.initListView(systemMusic);
+                    }
                     break;
                 case CUSTOM_MUSIC:
                     customMusic = (HashMap<String, String>) mes.obj;
+                    if(ringtoneMusicFragment.created){
+                        ringtoneMusicFragment.initListView(customMusic);
+                    }
                     break;
                 default:
                     break;
@@ -81,13 +103,26 @@ public class AlarmDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_detail);
 
+        context = this;
         initTitle(getIntent());
         alarm = getAlarm(getIntent());
-        initFragment();
-        musicServiceHandler = new MusicServiceHandler(AlarmDetail.this);
+        newRingtone = alarm.getRingtone();
+        newRingtoneType = alarm.getRingtoneType();
+        newRingtoneUri = alarm.getRingtoneUri();
+        volume = alarm.getVolume();
+
+        initFragmentList();
+        fragmentManager = getSupportFragmentManager();
+        fragmentAdapter = new FragmentAdapter(fragmentManager, fragments);
+        vp_detail = (ViewPager)findViewById(R.id.vp_detail);
+        initViewPager();
+
+        musicServiceHandler = new MusicServiceHandler(context);
+        musicServiceHandler.startPlayService();
+        DataInit.getAllSystemMusic(this, singleThreadExecutor, handler);
+        DataInit.getAllCustomMusic(this, singleThreadExecutor, handler);
 
         returnIntent = new Intent();
-        DataInit.getAllMusic(this, handler);
     }
 
     //获取初始化的闹钟信息
@@ -97,9 +132,9 @@ public class AlarmDetail extends AppCompatActivity {
             case ALTER_ALARM:
                 return lastIntent.getParcelableExtra("alarm");
             case CREATE_ALARM:
-                return DataInit.getDefaultAlarm(AlarmDetail.this);
+                return DataInit.getDefaultAlarm(context);
             default:
-                return DataInit.getDefaultAlarm(AlarmDetail.this);
+                return DataInit.getDefaultAlarm(context);
         }
     }
 
@@ -110,8 +145,6 @@ public class AlarmDetail extends AppCompatActivity {
                 mainTitle = "修改闹钟";
                 break;
             case CREATE_ALARM:
-                mainTitle = "新建闹钟";
-                break;
             default:
                 mainTitle = "新建闹钟";
                 break;
@@ -119,28 +152,37 @@ public class AlarmDetail extends AppCompatActivity {
         setCustomActionBar(mainTitle);
     }
 
-    private void initFragment(){
-        fragmentManager = getFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentManager.removeOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+    private void initFragmentList(){
+        fragments = new ArrayList<Fragment>();
+        alarmDetailFragment = new AlarmDetailFragment();
+        ringtoneMainFragment = new RingtoneMainFragment();
+        ringtoneMusicFragment = new RingtoneMusicFragment();
+        fragments.add(alarmDetailFragment);
+        fragments.add(ringtoneMainFragment);
+        fragments.add(ringtoneMusicFragment);
+    }
+
+    //初始化ViewPager组件
+    private void initViewPager(){
+        vp_detail.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
             @Override
-            public void onBackStackChanged() {
-                //通过判断返回栈的总数来判断具体跳转到的页面
-                switch (fragmentManager.getBackStackEntryCount()+4+1) {
-                    case SYSTEM_MUSIC:
-                        changeActionBarTitle(mainTitle);
-                        break;
-                    case CUSTOM_MUSIC:
-                        changeActionBarTitle("铃声");
-                        break;
-                    default:
-                        clearBackStack(fragmentManager);
-                        changeActionBarTitle(mainTitle);
-                        break;
-                }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // This space for rent
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                // This space for rent
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // This space for rent
             }
         });
-        alarmDetailFragment = (AlarmDetailFragment)fragmentManager.findFragmentById(R.id.fg_detail_main);
+        vp_detail.setAdapter(fragmentAdapter);
+        vp_detail.setCurrentItem(0);
+        position = MAIN_FRAGMENT;
     }
 
     //初始化导航栏，并给按钮添加点击事件
@@ -158,31 +200,30 @@ public class AlarmDetail extends AppCompatActivity {
         img_detail_actionBarCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(fragmentManager.getBackStackEntryCount() == 0){
-                    AlarmDetail.this.setResult(CANCEL, returnIntent);
-                    AlarmDetail.this.finish();
-                }else{
-                    musicServiceHandler.stopRingtone();
-                    fragmentManager.popBackStack();
-                }
+                retreat();
             }
         });
         img_detail_actionBarSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(fragmentManager.getBackStackEntryCount() == 0){
-                    returnIntent.putExtra("alarm", alarm);
-                    AlarmDetail.this.setResult(typeOfOperation, returnIntent);
-                    AlarmDetail.this.finish();
-                }else{
-                    musicServiceHandler.stopRingtone();
-                    if(newRingtoneUri != null && !(newRingtoneUri.equals(alarm.getRingtoneUri()))){
+                musicServiceHandler.stopRingtone();
+                switch(position){
+                    case CUSTOM_MUSIC:
+                    case SYSTEM_MUSIC:
+                        position = MAIN_FRAGMENT;
+                        changeActionBarTitle(mainTitle);
+                        vp_detail.setCurrentItem(0);
                         alarm.setRingtone(newRingtone);
                         alarm.setRingtoneUri(newRingtoneUri);
                         alarm.setRingtoneType(newRingtoneType);
-                    }
-                    ((TextView)(alarmDetailFragment.getView().findViewById(R.id.tv_detail_ringtone))).setText(alarm.getRingtone());
-                    clearBackStack(fragmentManager);
+                        ((TextView)(alarmDetailFragment.getView().findViewById(R.id.tv_detail_ringtone))).setText(newRingtone);
+                        break;
+                    case MAIN_FRAGMENT:
+                        musicServiceHandler.stopPlayService();
+                        returnIntent.putExtra("alarm", alarm);
+                        ((AlarmDetail)context).setResult(typeOfOperation, returnIntent);
+                        ((AlarmDetail)context).finish();
+                        break;
                 }
             }
         });
@@ -191,11 +232,9 @@ public class AlarmDetail extends AppCompatActivity {
             actionBar.setCustomView(actionBarView, lp);
         }catch (NullPointerException e){
             e.printStackTrace();
-            Toast.makeText(AlarmDetail.this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }finally {
-            Toast.makeText(AlarmDetail.this, "finally", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM|ActionBar.DISPLAY_HOME_AS_UP);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
@@ -214,12 +253,40 @@ public class AlarmDetail extends AppCompatActivity {
             actionBar.setCustomView(actionBarView, lp);
         }catch (NullPointerException e){
             e.printStackTrace();
-            Toast.makeText(AlarmDetail.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    //清空返回栈
-    private void clearBackStack(FragmentManager fm){
-        fm.popBackStack("first", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    @Override
+    public void onBackPressed(){
+        retreat();
+    }
+
+    @Override
+    public void onDestroy(){
+        Log.i("AlarmDetail", "AlarmDetail destroyed...");
+        super.onDestroy();
+    }
+
+    private void retreat(){
+        musicServiceHandler.stopRingtone();
+        switch(position){
+            case CUSTOM_MUSIC:
+                position = SYSTEM_MUSIC;
+                vp_detail.setCurrentItem(1);
+                break;
+            case SYSTEM_MUSIC:
+                position = MAIN_FRAGMENT;
+                vp_detail.setCurrentItem(0);
+                newRingtone = alarm.getRingtone();
+                newRingtoneType = alarm.getRingtoneType();
+                newRingtoneUri = alarm.getRingtoneUri();
+                break;
+            case MAIN_FRAGMENT:
+                musicServiceHandler.stopPlayService();
+                ((AlarmDetail)context).setResult(CANCEL, returnIntent);
+                ((AlarmDetail)context).finish();
+                break;
+        }
     }
 }

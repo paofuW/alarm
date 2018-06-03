@@ -6,11 +6,10 @@ import android.os.Message;
 
 import com.alarm.model.bean.Alarm;
 import com.alarm.model.util.AlarmDataUtil;
-import com.alarm.model.util.ArrayUtil;
 import com.alarm.model.util.AudioUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Administrator on 2018/4/27.
@@ -29,16 +28,12 @@ public class DataInit {
     public final static int SYSTEM_MUSIC = 5;
     public final static int CUSTOM_MUSIC  = 6;
 
-    private static String[] frequencyChoices = new String[]{"仅一次","周一至周五","每天","周末"};
+    public final static int INIT = 7;
+
+    public final static String TIMECHANGED = "com.alarm.TIMECHANGED";
+
+    private static String[] frequencyChoices = new String[]{"一次","周一至周五","每天","周末"};
     private static String[] remindAfterChoices = new String[]{"关闭","5分钟","10分钟","15分钟","30分钟"};
-
-    public static ArrayList<String> getHourArr(Integer startNum, Integer endNum){
-        return ArrayUtil.initArray(startNum, endNum);
-    }
-
-    public static ArrayList<String> getMinuteArr(Integer startNum, Integer endNum){
-        return ArrayUtil.initArray(startNum, endNum);
-    }
 
     public static Alarm getDefaultAlarm(Context context){
         String[] defaultRingtone = AudioUtil.getDefaultRingtone(context);
@@ -52,7 +47,10 @@ public class DataInit {
         alarm.setRingtoneUri((defaultRingtone[1] != null)? defaultRingtone[1] : null);
         alarm.setRingtoneType(SYSTEM_MUSIC);
         alarm.setRemindAfter(0);
-        alarm.setDescription("无");
+        alarm.setDescription("闹钟");
+        alarm.setEnabled(true);
+        alarm.setIsVerification(false);
+        alarm.setVerification("好的");
         return alarm;
     }
 
@@ -65,8 +63,8 @@ public class DataInit {
     }
 
     //该函数启动两个线程获取相应的音乐
-    public static void getAllMusic(final Context context,final Handler handler){
-        new Thread(new Runnable() {
+    public static void getAllSystemMusic(final Context context, ExecutorService singleThreadExecutor, final Handler handler){
+        singleThreadExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 HashMap<String, String> systemMusic = AudioUtil.getAllSystemMusic(context);
@@ -76,8 +74,10 @@ public class DataInit {
                 handler.sendMessage(message);
             }
         });
+    }
 
-        new Thread(new Runnable() {
+    public static void getAllCustomMusic(final Context context, ExecutorService singleThreadExecutor, final Handler handler){
+        singleThreadExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 HashMap<String, String> customMusic = AudioUtil.getAllCustomMusic(context);
@@ -88,13 +88,4 @@ public class DataInit {
             }
         });
     }
-//
-//    public static HashMap<String, String> getAllSystemMusic(Context context){
-//
-//        return AudioUtil.getAllSystemMusic(context);
-//    }
-//
-//    public static HashMap<String, String> getAllCustomMusic(Context context){
-//        return AudioUtil.getAllCustomMusic(context);
-//    }
 }

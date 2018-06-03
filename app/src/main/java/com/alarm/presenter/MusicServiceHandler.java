@@ -47,7 +47,12 @@ public class MusicServiceHandler {
 
     public void playRingtone(String ringtoneUri, float volume){
         Uri uri = Uri.parse(ringtoneUri);
-        audioService.playMusic(uri, volume);
+        audioService.playMusic(mContext, uri, volume);
+    }
+
+    public void volumeAudition(String ringtoneUri, float volume){
+        Uri uri = Uri.parse(ringtoneUri);
+        audioService.volumeAudition(mContext, uri, volume);
     }
 
     public void stopRingtone(){

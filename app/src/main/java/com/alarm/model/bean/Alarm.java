@@ -18,6 +18,9 @@ public class Alarm implements Parcelable{
     private int ringtoneType;
     private int remindAfter;
     private String description;
+    private boolean enabled;
+    private boolean isVerification;
+    private String verification;
 
     //获取和设置该闹钟的id（用于设置pending的requestCode以识别不同的闹钟
     public int getID(){
@@ -99,6 +102,30 @@ public class Alarm implements Parcelable{
         this.description = description;
     }
 
+    //是否开启使用
+    public boolean getEnabled(){
+        return enabled;
+    }
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
+    }
+
+    //是否开启验证字验证
+    public boolean getIsVerification(){
+        return isVerification;
+    }
+    public void setIsVerification(Boolean isVerification){
+        this.isVerification = isVerification;
+    }
+
+    //获取或设置输入验证的验证字
+    public String getVerification(){
+        return verification;
+    }
+    public void setVerification(String verification){
+        this.verification = verification;
+    }
+
     @Override
     public int describeContents(){
         return 0;
@@ -117,6 +144,9 @@ public class Alarm implements Parcelable{
         parcel.writeInt(ringtoneType);
         parcel.writeInt(remindAfter);
         parcel.writeString(description);
+        parcel.writeInt((enabled?1:0));
+        parcel.writeInt((isVerification?1:0));
+        parcel.writeString(verification);
     }
 
     public static final Parcelable.Creator<Alarm> CREATOR = new Creator<Alarm>() {
@@ -139,6 +169,9 @@ public class Alarm implements Parcelable{
             alarm.setRingtoneType(source.readInt());
             alarm.setRemindAfter(source.readInt());
             alarm.setDescription(source.readString());
+            alarm.setEnabled(source.readInt()==1);
+            alarm.setIsVerification(source.readInt()==1);
+            alarm.setVerification(source.readString());
             return alarm;
         }
     };

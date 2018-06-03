@@ -1,5 +1,9 @@
 package com.alarm.model.util;
 
+import android.content.Intent;
+
+import com.alarm.model.bean.Alarm;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -40,5 +44,57 @@ public class AlarmDataUtil {
         return Integer.parseInt(dFormat.format(calendar.getTime()));
     }
 
+//    判断一个闹钟是否重复(区分一次性闹钟与重复性闹钟)
+    public static boolean isRepeat(String frequency){
+        return !frequency.equals("一次");
+    }
 
+//    判断是否需要响闹铃
+    public static boolean needToAlarm(String frequency){
+        Calendar calendar = Calendar.getInstance();
+        int[] freqArr = AlarmDataUtil.freqStrToInt(frequency);
+        return frequency.equals("一次") || ArrayUtil.containInt(freqArr, calendar.get(Calendar.DAY_OF_WEEK));
+    }
+
+//    判断是否需要稍后提醒
+    public static boolean isRemindAfter(int remindAfter){
+        return (remindAfter != 0);
+    }
+
+//    在无法使用putParcelableExtra(putExtra)的情况下的代替方法
+    public static Intent putParcelableExtra(Intent intent, Alarm alarm){
+        intent.putExtra("ID", alarm.getID());
+        intent.putExtra("hour",alarm.getHour());
+        intent.putExtra("minute",alarm.getMinute());
+        intent.putExtra("frequency",alarm.getFrequency());
+        intent.putExtra("volume",alarm.getVolume());
+        intent.putExtra("ringtone",alarm.getRingtone());
+        intent.putExtra("ringtoneUri",alarm.getRingtoneUri());
+        intent.putExtra("ringtoneType",alarm.getRingtoneType());
+        intent.putExtra("remindAfter",alarm.getRemindAfter());
+        intent.putExtra("description",alarm.getDescription());
+        intent.putExtra("enabled",alarm.getEnabled());
+        intent.putExtra("isVerification", alarm.getIsVerification());
+        intent.putExtra("verification", alarm.getVerification());
+        return intent;
+    }
+
+//     在无法使用getParcelableExtra的情况下的代替方法
+    public static Alarm getParcelableExtra(Intent intent){
+        Alarm alarm = new Alarm();
+        alarm.setID(intent.getIntExtra("ID", 0));
+        alarm.setHour(intent.getIntExtra("hour", 0));
+        alarm.setMinute(intent.getIntExtra("minute", 0));
+        alarm.setFrequency(intent.getStringExtra("frequency"));
+        alarm.setVolume(intent.getFloatExtra("volume", 0));
+        alarm.setRingtone(intent.getStringExtra("ringtone"));
+        alarm.setRingtoneUri(intent.getStringExtra("ringtoneUri"));
+        alarm.setRingtoneType(intent.getIntExtra("ringtoneType", 0));
+        alarm.setRemindAfter(intent.getIntExtra("remindAfter", 0));
+        alarm.setDescription(intent.getStringExtra("description"));
+        alarm.setEnabled(intent.getBooleanExtra("enabled", true));
+        alarm.setIsVerification(intent.getBooleanExtra("isVerification", false));
+        alarm.setVerification(intent.getStringExtra("verification"));
+        return alarm;
+    }
 }

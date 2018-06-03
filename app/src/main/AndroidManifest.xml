@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.alarm">
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="false"
@@ -24,6 +25,30 @@
         <activity android:name=".view.AlarmDetail">
         </activity>
         <service android:name=".model.service.AudioService"/>
-        <service android:name=".model.service.MyAlarmService"/>
+        <service android:name=".model.service.SetAlarmService">
+        </service>
+        <service
+            android:name=".model.service.AlarmReceiverService"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="com.alarm.AlarmReceiver"/>
+            </intent-filter>
+        </service>
+        <receiver
+            android:name=".model.receiver.StartUpReceiver"
+            android:exported="true">
+            <intent-filter android:priority="1000" >
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".model.receiver.TimeChangedReceiver"
+            android:exported="true">
+            <intent-filter android:priority="200">
+                <action android:name="android.intent.action.TIME_TICK"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
