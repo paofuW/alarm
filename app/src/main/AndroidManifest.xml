@@ -24,6 +24,13 @@
         </activity>
         <activity android:name=".view.AlarmDetail">
         </activity>
+        <activity
+            android:name=".view.AlarmAlert"
+            android:theme="@style/dialogActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.alarm.view.AlarmAlertDialog"
+            android:screenOrientation="portrait">
+        </activity>
         <service android:name=".model.service.AudioService"/>
         <service android:name=".model.service.SetAlarmService">
         </service>

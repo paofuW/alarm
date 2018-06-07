@@ -49,12 +49,6 @@ public class AlarmDataUtil {
         return !frequency.equals("一次");
     }
 
-//    判断是否需要响闹铃
-    public static boolean needToAlarm(String frequency){
-        Calendar calendar = Calendar.getInstance();
-        int[] freqArr = AlarmDataUtil.freqStrToInt(frequency);
-        return frequency.equals("一次") || ArrayUtil.containInt(freqArr, calendar.get(Calendar.DAY_OF_WEEK));
-    }
 
 //    判断是否需要稍后提醒
     public static boolean isRemindAfter(int remindAfter){

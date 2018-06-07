@@ -105,7 +105,7 @@ public class AlarmDetailFragment extends Fragment{
                                     @Override
                                     public void onClick(DialogInterface dialog, int which){
                                         String inputDescription = editText.getText().toString();
-                                        if( inputDescription.equals("")){
+                                        if( inputDescription.equals("") || inputDescription.equals("无")){
                                             alarm.setDescription("闹钟");
                                             tv_description.setText("闹钟");
                                         }else{
@@ -147,7 +147,6 @@ public class AlarmDetailFragment extends Fragment{
                                 .create().show();
                         break;
                     case R.id.btn_detail_delete:
-                        alarmDetail.musicServiceHandler.stopPlayService();
                         alarmDetail.returnIntent.putExtra("alarm", alarm);
                         alarmDetail.setResult(DELETE_ALARM, alarmDetail.returnIntent);
                         alarmDetail.finish();

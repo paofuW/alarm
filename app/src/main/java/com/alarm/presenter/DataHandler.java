@@ -17,11 +17,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 
 import static com.alarm.presenter.DataInit.ALTER_ALARM;
 import static com.alarm.presenter.DataInit.DELETE_ALARM;
 import static com.alarm.presenter.DataInit.INIT;
-import static com.alarm.presenter.DataInit.TIMECHANGED;
+import static com.alarm.presenter.DataInit.TIME_CHANGED;
 
 
 /**
@@ -43,7 +44,7 @@ public class DataHandler {
         intent.putExtra("typeOfOperation", INIT);
         mContext.startService(intent);
         timeChangedReceiver = new TimeChangedReceiver();
-        mContext.registerReceiver(timeChangedReceiver, new IntentFilter(TIMECHANGED));
+        mContext.registerReceiver(timeChangedReceiver, new IntentFilter(TIME_CHANGED));
     }
 
     public ArrayList<Alarm> getAllAlarm(){
@@ -53,35 +54,36 @@ public class DataHandler {
 
     public void addAndSetAlarm(Alarm alarm){
         db.addAlarm(alarm);
-        setAlarm(mContext, intent, alarm);
+        setAlarm(mContext, intent, alarm, ALTER_ALARM);
     }
 
     public void updateAndSetAlarm(Alarm alarm){
         db.updateAlarm(alarm);
-        setAlarm(mContext, intent, alarm);
+        setAlarm(mContext, intent, alarm, ALTER_ALARM);
     }
 
     public void removeAndCancelAlarm(Alarm alarm){
         db.removeAlarm(alarm);
-        intent.putExtra("alarm", alarm);
-        intent.putExtra("typeOfOperation", DELETE_ALARM);
-        mContext.startService(intent);
+        setAlarm(mContext, intent, alarm, DELETE_ALARM);
     }
 
     public void updateAndCancelAlarm(Alarm alarm) {
         db.updateAlarm(alarm);
-        intent.putExtra("alarm", alarm);
-        intent.putExtra("typeOfOperation", DELETE_ALARM);
-        mContext.startService(intent);
+        setAlarm(mContext, intent, alarm, DELETE_ALARM);
     }
 
-    private void setAlarm(Context context, Intent intent, Alarm alarm){
+    public void destroyAll(){
+        mContext.unregisterReceiver(timeChangedReceiver);
+        db = null;
+    }
+
+    private void setAlarm(Context context, Intent intent, Alarm alarm, int type){
         //当sdk版本大于19时，使用新版的设置定时语句
         intent.putExtra("alarm", alarm);
-        intent.putExtra("remindAfterTimes", 0);
-        intent.putExtra("typeOfOperation", ALTER_ALARM);
+        intent.putExtra("typeOfOperation", type);
         context.startService(intent);
     }
+
 
     /**************************************************************
      * 以下是静态方法
@@ -141,7 +143,7 @@ public class DataHandler {
 
     public static String getRestOfTimeString(int alarmHour, int alarmMinute, String frequency){
         long[] restOfTime = getRestOfTime(alarmHour, alarmMinute, frequency);
-        return (restOfTime[0] !=0? restOfTime[0] + "天":"") + (restOfTime[1] !=0? restOfTime[1] + "小时":"") + restOfTime[2] + "分钟后响铃";
+        return (restOfTime[0] !=0? restOfTime[0] + "天":"") + (restOfTime[1] !=0? restOfTime[1] + "小时":"") + (restOfTime[2] !=0? restOfTime[2] + "分钟":"") + "后响铃";
     }
 
     public static Alarm getAlarmFromId(ArrayList<Alarm> alarms, int alarmId){
@@ -150,5 +152,21 @@ public class DataHandler {
 
     public static int getPositionFromId(ArrayList<Alarm> alarms, int alarmId){
         return ArrayUtil.getPositionFromId(alarms, alarmId);
+    }
+
+    public static Alarm getParcelableExtra(Intent intent){
+        return AlarmDataUtil.getParcelableExtra(intent);
+    }
+
+    //    判断是否需要响闹铃
+    public static boolean needToAlarm(String frequency){
+        Calendar calendar = Calendar.getInstance();
+        int[] freqArr = AlarmDataUtil.freqStrToInt(frequency);
+        return frequency.equals("一次") || ArrayUtil.containInt(freqArr, calendar.get(Calendar.DAY_OF_WEEK));
+    }
+
+    //将时分处理成正常显示的string（即xx:xx)
+    public static String getTimeString(int hour, int minute){
+        return String.format(Locale.CHINA, "%1$02d:%2$02d", hour, minute);
     }
 }

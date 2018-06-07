@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/ll_alert_normal_whole"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_alert_normal_time"
+            android:text="测试"
+            style="@style/xLargeTextStyle"
+            android:textColor="@color/colorWhite"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/tv_alert_normal_description"
+            style="@style/normalTextStyle"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            />
+        <Button
+            android:id="@+id/btn_alert_normal_sleepMore"
+            style="@style/normalTextStyle"
+            android:text="@string/alert_sleepMore"
+            android:textColor="@color/colorWhite"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:layout_marginTop="@dimen/large_padding"/>
+        <TextView
+            style="@style/normalTextStyle"
+            android:text="@string/alert_slideClose"
+            android:textColor="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:gravity="bottom"
+            android:paddingBottom="@dimen/normal_padding"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

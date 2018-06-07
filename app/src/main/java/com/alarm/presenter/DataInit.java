@@ -29,8 +29,10 @@ public class DataInit {
     public final static int CUSTOM_MUSIC  = 6;
 
     public final static int INIT = 7;
+    public final static int REMIND_LATER = 8;
 
-    public final static String TIMECHANGED = "com.alarm.TIMECHANGED";
+    public final static String TIME_CHANGED = "com.alarm.TIME_CHANGED";
+    public final static String UPDATE_ALARMS = "com.alarm.UPDATE_ALARMS";
 
     private static String[] frequencyChoices = new String[]{"一次","周一至周五","每天","周末"};
     private static String[] remindAfterChoices = new String[]{"关闭","5分钟","10分钟","15分钟","30分钟"};

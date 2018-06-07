@@ -36,13 +36,12 @@ public class MusicServiceHandler {
     }
 
     public void startPlayService(){
-        mContext.startService(intent);
         mContext.bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
 
     public void stopPlayService(){
         mContext.unbindService(conn);
-        mContext.stopService(intent);
+        conn = null;
     }
 
     public void playRingtone(String ringtoneUri, float volume){

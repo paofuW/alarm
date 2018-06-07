@@ -29,5 +29,7 @@
     <string name="ringtone_custom">自定义铃声</string>
 
     <string name="alert_verification">请输入验证字</string>
+    <string name="alert_sleepMore">点击此处小睡10分钟</string>
+    <string name="alert_slideClose"><![CDATA[滑动关闭闹钟 >>]]></string>
 
 </resources>

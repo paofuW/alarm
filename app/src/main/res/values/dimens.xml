@@ -3,8 +3,12 @@
     <dimen name="small_font_size">15sp</dimen>
     <dimen name="normal_font_size">20sp</dimen>
     <dimen name="large_font_size">40sp</dimen>
-    <dimen name="normal_padding">20dp</dimen>
+    <dimen name="x_large_font_size">70sp</dimen>
+
     <dimen name="small_padding">10dp</dimen>
+    <dimen name="normal_padding">20dp</dimen>
+    <dimen name="large_padding">60dp</dimen>
+
     <dimen name="normal_margin_top">4dp</dimen>
     <dimen name="normal_margin_lr">8dp</dimen>
 

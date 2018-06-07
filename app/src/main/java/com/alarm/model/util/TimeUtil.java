@@ -34,13 +34,13 @@ public class TimeUtil {
     }
 
 //    获取设置的闹钟时间的毫秒数，返回long类型
-    public static long getAlarmTimeMillis(int hour, int minute, boolean add){
+    public static long getAlarmTimeMillis(int hour, int minute, int addMinute){
         Calendar calendar = Calendar.getInstance();
         long currentTime = calendar.getTimeInMillis();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
-        calendar.add(Calendar.MINUTE, add?8:0);
+        calendar.add(Calendar.MINUTE, addMinute);
         //用于判断是否需要跨天
         if(currentTime >= calendar.getTimeInMillis()){
             calendar.add(Calendar.DAY_OF_MONTH, 1);

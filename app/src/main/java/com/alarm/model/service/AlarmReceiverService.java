@@ -17,6 +17,7 @@ import com.alarm.R;
 import com.alarm.model.bean.Alarm;
 import com.alarm.model.db.AlarmDB;
 import com.alarm.model.util.AlarmDataUtil;
+import com.alarm.presenter.DataHandler;
 import com.alarm.presenter.DataInit;
 
 import static com.alarm.presenter.DataInit.INIT;
@@ -34,10 +35,10 @@ public class AlarmReceiverService extends Service {
     private View mView;
     private Intent musicIntent;
 
-    private TextView tv_alert_description;
-    private EditText et_alert_verification;
-    private Button btn_alert_positive;
-    private Button btn_alert_negative;
+    private TextView tv_alert_advanced_description;
+    private EditText et_alert_advanced_verification;
+    private Button btn_alert_advanced_positive;
+    private Button btn_alert_advanced_negative;
 
     @Nullable
     @Override
@@ -61,12 +62,13 @@ public class AlarmReceiverService extends Service {
         para.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         //设置为系统提示
         para.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        para.windowAnimations = android.R.style.Animation_Translucent;
         mView = LayoutInflater.from(getApplicationContext()).inflate(
-                R.layout.system_alert_dialog, null);
-        tv_alert_description = (TextView)mView.findViewById(R.id.tv_alert_description);
-        et_alert_verification = (EditText)mView.findViewById(R.id.et_alert_verification);
-        btn_alert_positive = (Button)mView.findViewById(R.id.btn_alert_positive);
-        btn_alert_negative = (Button)mView.findViewById(R.id.btn_alert_negative);
+                R.layout.alarm_alert_advanced, null);
+        tv_alert_advanced_description = (TextView)mView.findViewById(R.id.tv_alert_advanced_description);
+        et_alert_advanced_verification = (EditText)mView.findViewById(R.id.et_alert_advanced_verification);
+        btn_alert_advanced_positive = (Button)mView.findViewById(R.id.btn_alert_advanced_positive);
+        btn_alert_advanced_negative = (Button)mView.findViewById(R.id.btn_alert_advanced_negative);
 
         musicIntent = new Intent(AlarmReceiverService.this, AudioService.class);
         mIntent = new Intent(AlarmReceiverService.this, SetAlarmService.class);
@@ -79,12 +81,12 @@ public class AlarmReceiverService extends Service {
         if(intent.getBooleanExtra("savedInstanceState", true)){
             Intent mIntent = new Intent(this, SetAlarmService.class);
             mIntent.putExtra("typeOfOperation", INIT);
-            startService(intent);
+            startService(mIntent);
         }else {
             if (intent.getBooleanExtra("listen", false)) {
                 missionComplete(alarm, mIntent, intent.getBooleanExtra("listen", false));
             } else {
-                if (AlarmDataUtil.needToAlarm(alarm.getFrequency())) {
+                if (DataHandler.needToAlarm(alarm.getFrequency())) {
                     //volume为AudioService是否播放闹铃的判断依据
                     musicIntent.putExtra("ringtoneUri", alarm.getRingtoneUri());
                     musicIntent.putExtra("volume", alarm.getVolume());
@@ -96,35 +98,35 @@ public class AlarmReceiverService extends Service {
                     mIntent.putExtra("alarm", alarm);
                     startService(mIntent);
 
-                    String description = alarm.getDescription().equals("无") ? "闹钟来了" : alarm.getDescription();
+                    String description = alarm.getDescription();
                     if (alarm.getIsVerification()) {
-                        et_alert_verification.setVisibility(View.VISIBLE);
-                        tv_alert_description.setText(description);
-                        btn_alert_positive.setText("对吗");
-                        btn_alert_positive.setOnClickListener(new View.OnClickListener() {
+                        et_alert_advanced_verification.setVisibility(View.VISIBLE);
+                        tv_alert_advanced_description.setText(description);
+                        btn_alert_advanced_positive.setText("对吗");
+                        btn_alert_advanced_positive.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (et_alert_verification.getText().toString().equals(alarm.getVerification())) {
+                                if (et_alert_advanced_verification.getText().toString().equals(alarm.getVerification())) {
                                     missionComplete(alarm, mIntent, false);
                                 } else {
                                     Toast.makeText(AlarmReceiverService.this, "验证错误，请重新输入", Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
-                        btn_alert_negative.setText("听歌");
-                        btn_alert_negative.setOnClickListener(new View.OnClickListener() {
+                        btn_alert_advanced_negative.setText("听歌");
+                        btn_alert_advanced_negative.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                btn_alert_negative.setVisibility(View.GONE);
+                                btn_alert_advanced_negative.setVisibility(View.GONE);
                             }
                         });
                         wm.addView(mView, para);
                     } else {
-                        tv_alert_description.setText(description);
-                        et_alert_verification.setVisibility(View.GONE);
-                        btn_alert_negative.setVisibility(View.GONE);
-                        btn_alert_positive.setText("好的");
-                        btn_alert_positive.setOnClickListener(new View.OnClickListener() {
+                        tv_alert_advanced_description.setText(description);
+                        et_alert_advanced_verification.setVisibility(View.GONE);
+                        btn_alert_advanced_negative.setVisibility(View.GONE);
+                        btn_alert_advanced_positive.setText("好的");
+                        btn_alert_advanced_positive.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 missionComplete(alarm, mIntent, false);
@@ -140,25 +142,6 @@ public class AlarmReceiverService extends Service {
                 }
             }
         }
-
-
-//        if(AlarmDataUtil.isRemindAfter(alarm.getRemindAfter())){
-//            tv_alert_description.setText("稍后提醒");
-//            tv_alert_message.setText(alarm.getDescription());
-//            btn_alert_positive.setText("那行");
-//            btn_alert_positive.setOnClickListener(listener);
-//            btn_alert_negative.setText("不要");
-//            btn_alert_negative.setOnClickListener(listener);
-//            wm.addView(mView, para);
-//        }else{
-//            tv_alert_description.setText("闹钟来了");
-//            tv_alert_message.setText(alarm.getDescription());
-//            btn_alert_positive.setVisibility(View.GONE);
-//            btn_alert_negative.setText("好的");
-//            btn_alert_negative.setOnClickListener(listener);
-//            wm.addView(mView, para);
-//        }
-
         return super.onStartCommand(intent,flags,startId);
     }
 
@@ -188,17 +171,4 @@ public class AlarmReceiverService extends Service {
     public void onDestroy(){
         super.onDestroy();
     }
-
-    /**
-     * 更新原来id的闹钟
-     * @param context   用于开启服务的上下文环境
-     * @param intent    用于通信，传输设置闹钟所需要的相关信息
-     * @param remindAfterTimes  该参数提示“稍后提醒”的次数，即当前闹钟为第几次稍后提醒的闹钟，用于设置闹钟响起时间
-     * @param alarm   更新的闹钟的id（即alarm的ID）
-     */
-//    private void setAndStartService(Context context, Intent intent, int remindAfterTimes, Alarm alarm){
-//        intent.putExtra("alarm", alarm);
-//        intent.putExtra("remindAfterTimes", remindAfterTimes);
-//        context.startService(intent);
-//    }
 }

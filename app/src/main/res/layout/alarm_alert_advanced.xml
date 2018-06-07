@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/alert_circle"
+        >
+        <TextView
+            android:id="@+id/tv_alert_advanced_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/normal_font_size"
+            android:textColor="@color/colorBlack"
+            android:gravity="center"
+            android:paddingTop="@dimen/small_padding"
+            android:padding="@dimen/normal_padding"
+            android:textStyle="bold"
+            android:text="TextView"
+            />
+
+
+        <EditText
+            android:id="@+id/et_alert_advanced_verification"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:padding="@dimen/small_padding"
+            android:layout_margin="@dimen/small_padding"
+            android:background="@drawable/alert_edit"
+            android:hint="@string/alert_verification"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/btn_alert_advanced_positive"
+                android:layout_weight="1"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/alert_btn"
+                android:text="Button"/>
+
+            <Button
+                android:id="@+id/btn_alert_advanced_negative"
+                android:layout_weight="1"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/alert_btn"
+                android:text="Button"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

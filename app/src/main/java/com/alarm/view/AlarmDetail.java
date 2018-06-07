@@ -1,12 +1,16 @@
 package com.alarm.view;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -119,8 +123,7 @@ public class AlarmDetail extends AppCompatActivity {
 
         musicServiceHandler = new MusicServiceHandler(context);
         musicServiceHandler.startPlayService();
-        DataInit.getAllSystemMusic(this, singleThreadExecutor, handler);
-        DataInit.getAllCustomMusic(this, singleThreadExecutor, handler);
+        requestPower();
 
         returnIntent = new Intent();
     }
@@ -219,7 +222,6 @@ public class AlarmDetail extends AppCompatActivity {
                         ((TextView)(alarmDetailFragment.getView().findViewById(R.id.tv_detail_ringtone))).setText(newRingtone);
                         break;
                     case MAIN_FRAGMENT:
-                        musicServiceHandler.stopPlayService();
                         returnIntent.putExtra("alarm", alarm);
                         ((AlarmDetail)context).setResult(typeOfOperation, returnIntent);
                         ((AlarmDetail)context).finish();
@@ -265,6 +267,7 @@ public class AlarmDetail extends AppCompatActivity {
     @Override
     public void onDestroy(){
         Log.i("AlarmDetail", "AlarmDetail destroyed...");
+        musicServiceHandler.stopPlayService();
         super.onDestroy();
     }
 
@@ -283,10 +286,46 @@ public class AlarmDetail extends AppCompatActivity {
                 newRingtoneUri = alarm.getRingtoneUri();
                 break;
             case MAIN_FRAGMENT:
-                musicServiceHandler.stopPlayService();
                 ((AlarmDetail)context).setResult(CANCEL, returnIntent);
                 ((AlarmDetail)context).finish();
                 break;
+        }
+    }
+
+    public void requestPower() {
+        //判断是否已经赋予权限
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true。
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                //这里可以写个对话框之类的项向用户解释为什么要申请权限，并在对话框的确认键后续再次申请权限
+                Toast.makeText(this, "该app需要读取权限，读取系统音乐", Toast.LENGTH_LONG);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,}, 1);
+            } else {
+                //申请权限，字符串数组内是一个或多个要申请的权限，1是申请权限结果的返回参数，在onRequestPermissionsResult可以得知申请结果
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,}, 1);
+            }
+        }
+        DataInit.getAllSystemMusic(this, singleThreadExecutor, handler);
+        DataInit.getAllCustomMusic(this, singleThreadExecutor, handler);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    DataInit.getAllSystemMusic(this, singleThreadExecutor, handler);
+                    DataInit.getAllCustomMusic(this, singleThreadExecutor, handler);
+                } else {
+                    Toast.makeText(this, "" + "权限" + permissions[i] + "申请失败", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }

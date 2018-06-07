@@ -24,12 +24,12 @@ import com.alarm.model.bean.Alarm;
 import com.alarm.presenter.DataHandler;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static com.alarm.presenter.DataInit.ALTER_ALARM;
 import static com.alarm.presenter.DataInit.CREATE_ALARM;
 import static com.alarm.presenter.DataInit.DELETE_ALARM;
-import static com.alarm.presenter.DataInit.TIMECHANGED;
+import static com.alarm.presenter.DataInit.TIME_CHANGED;
+import static com.alarm.presenter.DataInit.UPDATE_ALARMS;
 
 
 /**
@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity{
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         timeChangedRecv = new TimeChangedRecv();
         intentFilter = new IntentFilter();
-        intentFilter.addAction(TIMECHANGED);
+        intentFilter.addAction(TIME_CHANGED);
+        intentFilter.addAction(UPDATE_ALARMS);
         //注册本地接收器
         localBroadcastManager.registerReceiver(timeChangedRecv, intentFilter);
 
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity{
     public void onDestroy(){
         super.onDestroy();
         localBroadcastManager.unregisterReceiver(timeChangedRecv);
+        dataHandler.destroyAll();
         dataHandler = null;
     }
     @Override
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity{
         switch (resultCode){
             case CREATE_ALARM:
                 alarm = data.getParcelableExtra("alarm");
+                alarm.setEnabled(true);
                 dataHandler.addAndSetAlarm(alarm);
                 alarms.add(alarm);
                 ll_main_showAlarm.addView(initAlarmView(inflater, alarm));
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity{
                 break;
             case ALTER_ALARM:
                 alarm = data.getParcelableExtra("alarm");
+                alarm.setEnabled(true);
                 dataHandler.updateAndSetAlarm(alarm);
                 alarms.set(DataHandler.getPositionFromId(alarms, alarm.getID()), alarm);
                 changeAlarmViewInfo(ll_main_showAlarm.findViewById(alarm.getID()), alarm);
@@ -175,7 +179,7 @@ public class MainActivity extends AppCompatActivity{
         TextView tv_alarm_restOfTime = (TextView)view.findViewById(R.id.tv_alarm_restOfTime);
         Switch swt_alarm_enabled = (Switch)view.findViewById(R.id.swt_alarm_enabled);
 
-        tv_alarm_time.setText(String.format(Locale.CHINA, "%1$02d:%2$02d", alarm.getHour(), alarm.getMinute()));
+        tv_alarm_time.setText(DataHandler.getTimeString(alarm.getHour(), alarm.getMinute()));
         tv_alarm_description.setText(alarm.getDescription());
         tv_alarm_frequency.setText(alarm.getFrequency());
 
@@ -208,7 +212,19 @@ public class MainActivity extends AppCompatActivity{
     public class TimeChangedRecv extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent){
-            updateRestOfTime();
+            switch (intent.getAction()){
+                case TIME_CHANGED:
+                    updateRestOfTime();
+                    break;
+                case UPDATE_ALARMS:
+                    Alarm alarm1 = intent.getParcelableExtra("alarm");
+                    dataHandler.updateAndCancelAlarm(alarm1);
+                    alarms.set(DataHandler.getPositionFromId(alarms, alarm1.getID()), alarm1);
+                    changeAlarmViewInfo(ll_main_showAlarm.findViewById(alarm1.getID()), alarm1);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

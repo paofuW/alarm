@@ -11,12 +11,14 @@ import com.alarm.model.bean.Alarm;
 import com.alarm.model.db.AlarmDB;
 import com.alarm.model.receiver.TimeChangedReceiver;
 import com.alarm.model.util.AlarmServiceUtil;
+import com.alarm.presenter.DataHandler;
 
 import java.util.ArrayList;
 
 import static com.alarm.presenter.DataInit.ALTER_ALARM;
 import static com.alarm.presenter.DataInit.DELETE_ALARM;
 import static com.alarm.presenter.DataInit.INIT;
+import static com.alarm.presenter.DataInit.REMIND_LATER;
 
 /**
  * Created by Administrator on 2018/5/28.
@@ -43,7 +45,7 @@ public class SetAlarmService extends Service {
         for(int i = 0; i < alarms.size(); i++){
             if(alarms.get(i).getEnabled()) {
                 Log.i("SetAlarmService", "设置闹钟服务:开启闹钟" + alarms.get(i).getID());
-                AlarmServiceUtil.setWindowAlarmService(SetAlarmService.this, alarms.get(i), false);
+                AlarmServiceUtil.setWindowAlarmService(SetAlarmService.this, alarms.get(i), 0);
             }
         }
         TimeChangedReceiver timeChangedReceiver = new TimeChangedReceiver();
@@ -53,20 +55,19 @@ public class SetAlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         Alarm alarm;
+        alarm = intent.getParcelableExtra("alarm");
         switch(intent.getIntExtra("typeOfOperation", ALTER_ALARM)){
             case INIT:
-                Log.i("SetAlarmService", "设置闹钟服务:初始化");
                 break;
             case DELETE_ALARM:
-                Log.i("SetAlarmService", "设置闹钟服务:删除定时闹钟");
-                alarm = intent.getParcelableExtra("alarm");
                 AlarmServiceUtil.cancelAlarmService(SetAlarmService.this, alarm);
                 break;
+            case REMIND_LATER:
+                AlarmServiceUtil.setWindowAlarmService(SetAlarmService.this, alarm, 10);
+                break;
             default:
-                Log.i("SetAlarmService", "设置闹钟服务:修改定时闹钟");
-                alarm = intent.getParcelableExtra("alarm");
-                boolean listen = intent.getBooleanExtra("listen", false);
-                AlarmServiceUtil.setWindowAlarmService(SetAlarmService.this, alarm, listen);
+                Log.i("SetAlarmService", alarm.getID() + ":" + DataHandler.getTimeString(alarm.getHour(), alarm.getMinute()));
+                AlarmServiceUtil.setWindowAlarmService(SetAlarmService.this, alarm, 0);
                 break;
         }
         return START_STICKY;

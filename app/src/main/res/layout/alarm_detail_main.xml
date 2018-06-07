@@ -17,10 +17,12 @@
         android:id="@+id/tp_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/timePicker"
         android:layout_gravity="center"
-        android:numbersBackgroundColor="@color/colorPink"
-        android:headerBackground="@color/colorLightSkyBlue"
-        android:numbersSelectorColor="@color/colorLightSkyBlue"
+        android:descendantFocusability="beforeDescendants"
+        android:numbersBackgroundColor="@color/colorLightGrey2"
+        android:headerBackground="@color/colorLightGrey0"
+        android:numbersSelectorColor="@color/colorPrimary"
         >
 
     </TimePicker>

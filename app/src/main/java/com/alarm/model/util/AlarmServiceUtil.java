@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.alarm.model.bean.Alarm;
 import com.alarm.model.service.AlarmReceiverService;
+import com.alarm.view.AlarmAlert;
 
 import java.util.List;
 
@@ -59,13 +60,34 @@ public class AlarmServiceUtil {
 //        am.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, pi);
 //    }
 
-    //适用于sdk版本小于19的android机（重复提醒）
-//    public static void setRepeatAlarmService(Context context, Alarm alarm){
+    //适用于sdk版本大于19的android机（提醒一次）
+    public static void setWindowAlarmService(Context context, Alarm alarm, int minute){
+        PendingIntent pi = null;
+        Intent alarmIntent = new Intent(context, AlarmAlert.class);
+        alarmIntent = AlarmDataUtil.putParcelableExtra(alarmIntent, alarm);
+        alarmIntent.putExtra("savedInstanceState", false);
+        alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
+        try {
+            pi = PendingIntent.getActivity(context, alarm.getID(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } catch (Exception e) {
+            Log.i("AlarmServiceUtil", "failed to start " + e.toString());
+        }
+        AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);
+        //alarmTimeMillis ： 闹钟设定时间的毫秒数,listenMinute是延后分钟数
+
+        long alarmTimeMillis = TimeUtil.getAlarmTimeMillis(alarm.getHour(), alarm.getMinute(), minute);
+        am.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis, 0, pi);
+    }
+
+//    备份本
+//    public static void setWindowAlarmService(Context context, Alarm alarm, boolean listen){
 //        PendingIntent pi = null;
 //        Intent serviceIntent = new Intent(context, AlarmReceiverService.class);
 //        serviceIntent.setAction(ServiceName);
-//        serviceIntent.putExtra("alarm", alarm);
-//        serviceIntent.putExtra("isRepeat", true);
+//        serviceIntent = AlarmDataUtil.putParcelableExtra(serviceIntent, alarm);
+//        serviceIntent.putExtra("listen", listen);
+//        serviceIntent.putExtra("savedInstanceState", false);
 //
 //        try {
 //            pi = PendingIntent.getService(context, alarm.getID(), serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -73,31 +95,11 @@ public class AlarmServiceUtil {
 //            Log.i("AlarmServiceUtil", "failed to start " + e.toString());
 //        }
 //        AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);
-//        //alarmTimeMillis ： 闹钟设定时间的毫秒数
-//        long alarmTimeMillis = TimeUtil.getAlarmTimeMillis(alarm.getHour(), alarm.getMinute());
-//        am.setRepeating(AlarmManager.RTC_WAKEUP, alarmTimeMillis, 24*60*60*1000, pi);
+//        //alarmTimeMillis ： 闹钟设定时间的毫秒数,listenMinute是延后分钟数
+//
+//        long alarmTimeMillis = TimeUtil.getAlarmTimeMillis(alarm.getHour(), alarm.getMinute(), listen);
+//        am.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis, 0, pi);
 //    }
-
-    //适用于sdk版本大于19的android机（提醒一次）
-    public static void setWindowAlarmService(Context context, Alarm alarm, boolean listen){
-        PendingIntent pi = null;
-        Intent serviceIntent = new Intent(context, AlarmReceiverService.class);
-        serviceIntent.setAction(ServiceName);
-        serviceIntent = AlarmDataUtil.putParcelableExtra(serviceIntent, alarm);
-        serviceIntent.putExtra("listen", listen);
-        serviceIntent.putExtra("savedInstanceState", false);
-
-        try {
-            pi = PendingIntent.getService(context, alarm.getID(), serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        } catch (Exception e) {
-            Log.i("AlarmServiceUtil", "failed to start " + e.toString());
-        }
-        AlarmManager am = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);
-        //alarmTimeMillis ： 闹钟设定时间的毫秒数,listenMinute是延后分钟数
-
-        long alarmTimeMillis = TimeUtil.getAlarmTimeMillis(alarm.getHour(), alarm.getMinute(), listen);
-        am.setWindow(AlarmManager.RTC_WAKEUP, alarmTimeMillis, 0, pi);
-    }
 
     public static void cancelAlarmService(Context context, Alarm alarm){
         Log.i("AlarmServiceUtil", "cancelAlarm:" + alarm.getHour() + ":" + alarm.getMinute());
